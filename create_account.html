@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hesap Oluştur - Yoklama Kayıt Sistemi</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('New folder/kutuphane.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: #f0f0f0; /* نص أبيض فاتح */
+            font-family: 'Poppins', sans-serif;
+        }
+        .container {
+            max-width: 600px;
+            margin-top: 150px;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8); /* خلفية داكنة */
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .color {
+            background-color: #80200f;
+            border: none;
+            color: #fff; /* لون النص داخل الأزرار */
+            font-weight: bold;
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Hesap Oluştur</h2>
+        <form id="signupForm">
+            <div class="mb-3">
+                <label for="fullName" class="form-label">İsim</label>
+                <input type="text" id="fullName" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="username" id="usernameLabel" class="form-label">ID</label>
+                <input type="text" id="username" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="password" class="form-label">Şifre</label>
+                <input type="password" id="password" class="form-control" required>
+            </div>
+            <div class="mb-3">
+                <label for="accountType" class="form-label">Hesap Türü</label>
+                <select id="accountType" class="form-select" required>
+                    <option value="teacher">Öğretmen</option>
+                    <option value="student">Öğrenci</option>
+                </select>
+            </div>
+            <button type="submit" class="color w-100">Hesap Oluştur</button>
+        </form>
+    </div>
+
+    <script>
+        // تغيير نص "ID" بناءً على نوع الحساب
+        const accountTypeSelect = document.getElementById("accountType");
+        const usernameLabel = document.getElementById("usernameLabel");
+
+        accountTypeSelect.addEventListener("change", function() {
+            if (accountTypeSelect.value === "teacher") {
+                usernameLabel.textContent = "Öğretmen ID";
+            } else if (accountTypeSelect.value === "student") {
+                usernameLabel.textContent = "Öğrenci ID";
+            }
+        });
+
+        document.getElementById("signupForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            const fullName = document.getElementById("fullName").value.trim();
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const accountType = document.getElementById("accountType").value;
+
+            // التحقق من البيانات المدخلة
+            if (!fullName || !username || !password) {
+                alert("Lütfen tüm alanları doldurun.");
+                return;
+            }
+
+            // جلب الحسابات الموجودة ثم إضافة الحساب الجديد إليها
+            let accounts = JSON.parse(localStorage.getItem('accounts')) || [];
+            
+            // التحقق إذا كان هناك حساب بنفس اسم المستخدم
+            const existingAccount = accounts.find(account => account.username === username);
+            if (existingAccount) {
+                alert("Kullanıcı adı zaten alınmış.");
+                return;
+            }
+
+            accounts.push({ fullName, username, password, accountType });
+            localStorage.setItem('accounts', JSON.stringify(accounts));
+
+            alert("Hesap oluşturuldu!");
+
+            // التوجيه مباشرة بعد إنشاء الحساب بناءً على نوع الحساب
+            if (accountType === "teacher") {
+                window.location.href = "teacher_dashboard.html"; // توجيه إلى صفحة المعلم
+            } else {
+                window.location.href = "student_dashboard.html"; // توجيه إلى صفحة الطالب
+            }
+        });
+    </script>
+</body>
+</html>
